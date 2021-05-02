@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "stream-viewer", "stream-vie
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "poe.lib", "poe.lib\poe.lib.csproj", "{2240EAE4-C9C4-40F3-8E4D-3425A8DD5274}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ml-trainer", "ml-trainer\ml-trainer.csproj", "{AD7F3ADD-2E1E-4981-964A-4046670A5161}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{2240EAE4-C9C4-40F3-8E4D-3425A8DD5274}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2240EAE4-C9C4-40F3-8E4D-3425A8DD5274}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2240EAE4-C9C4-40F3-8E4D-3425A8DD5274}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD7F3ADD-2E1E-4981-964A-4046670A5161}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD7F3ADD-2E1E-4981-964A-4046670A5161}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD7F3ADD-2E1E-4981-964A-4046670A5161}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD7F3ADD-2E1E-4981-964A-4046670A5161}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

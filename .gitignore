@@ -1,4 +1,8 @@
 
+# custom
+assets/
+workspace/
+
 # Created by https://www.toptal.com/developers/gitignore/api/visualstudio,dotnetcore,csharp
 # Edit at https://www.toptal.com/developers/gitignore?templates=visualstudio,dotnetcore,csharp
 
