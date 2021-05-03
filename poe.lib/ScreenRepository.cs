@@ -26,6 +26,7 @@ namespace poe.lib
             parts.Add(new PartScreen(PartScreenType.FlaskSlot3, fullScreen, 396, 970, 50, 110));
             parts.Add(new PartScreen(PartScreenType.FlaskSlot4, fullScreen, 444, 970, 50, 110));
             parts.Add(new PartScreen(PartScreenType.FlaskSlot5, fullScreen, 492, 970, 50, 110));
+            parts.Add(new PartScreen(PartScreenType.ManaPool, fullScreen, 1690, 860, 230, 220));
 
             this.Parts = parts;
         }

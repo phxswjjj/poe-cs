@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Text;
 
 namespace poe.lib.ImageExtension
@@ -18,6 +20,17 @@ namespace poe.lib.ImageExtension
                 using (var g = Graphics.FromImage(target))
                 {
                     g.DrawImage(bitSrc, destRect, srcCropRect, GraphicsUnit.Pixel);
+                }
+            }
+
+            if (src.RawFormat != target.RawFormat)
+            {
+                using (var ms = new MemoryStream())
+                {
+                    target.Save(ms, src.RawFormat);
+                    var png = new Bitmap(ms);
+                    target.Dispose();
+                    return png;
                 }
             }
             return target;

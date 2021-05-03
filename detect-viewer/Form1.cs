@@ -24,7 +24,7 @@ namespace detect_viewer
         private void Form1_Load(object sender, EventArgs e)
         {
             var imgRepo = new ScreenRepository(Image.FromFile("screenshot.png"));
-            var img = imgRepo.GetPart(PartScreenType.LifePool).Source;
+            var img = imgRepo.GetPart(PartScreenType.ManaPool).Source;
 
             var solutionDirectory = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "../../../../"));
 
@@ -36,6 +36,11 @@ namespace detect_viewer
             ITransformer predictionPipeline = mlContext.Model.Load(modelRelativePath, out predictionPipelineSchema);
             PredictionEngine<ModelInput, ModelOutput> predictionEngine = mlContext.Model.CreatePredictionEngine<ModelInput, ModelOutput>(predictionPipeline);
             ModelInput inputData = new ModelInput();
+            using (var ms = new MemoryStream())
+            {
+                img.Save(ms, img.RawFormat);
+                inputData.Image = ms.ToArray();
+            }
             ModelOutput prediction = predictionEngine.Predict(inputData);
             OutputPrediction(prediction);
 
