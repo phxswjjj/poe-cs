@@ -1,4 +1,5 @@
 ﻿using Microsoft.ML;
+using poe.lib;
 using poe.lib.ML;
 using System;
 using System.Collections.Generic;
@@ -22,18 +23,8 @@ namespace detect_viewer
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            Image img = Image.FromFile("screenshot.png");
-            var rect = new Rectangle() { X = 0, Y = 860, Height = 1080 - 860, Width = 1920 };
-            using (var src = new Bitmap(img))
-            {
-                var target = new Bitmap(rect.Width, rect.Height);
-                using (var g = Graphics.FromImage(target))
-                {
-                    g.DrawImage(src, new Rectangle(new Point(0, 0), target.Size), rect, GraphicsUnit.Pixel);
-                }
-                img.Dispose();
-                img = target;
-            }
+            var imgRepo = new ScreenRepository(Image.FromFile("screenshot.png"));
+            var img = imgRepo.GetPart(PartScreenType.LifePool).Source;
 
             var solutionDirectory = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "../../../../"));
 
