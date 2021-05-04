@@ -48,12 +48,14 @@ namespace poe.lib
     {
         public Image Source;
         public PartScreenType PartType;
+        public Rectangle Location;
 
         public PartScreen(PartScreenType type, Image fullScreen, int x, int y, int width, int height)
         {
             this.PartType = type;
             var img = fullScreen.CropImage(x, y, width, height);
             this.Source = img;
+            this.Location = new Rectangle(x, y, width, height);
         }
 
         public void Dispose()
