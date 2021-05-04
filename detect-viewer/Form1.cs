@@ -1,5 +1,6 @@
 ﻿using Microsoft.ML;
 using poe.lib;
+using poe.lib.ImageExtension;
 using poe.lib.ML;
 using System;
 using System.Collections.Generic;
@@ -24,7 +25,8 @@ namespace detect_viewer
         private void Form1_Load(object sender, EventArgs e)
         {
             var imgRepo = new ScreenRepository(Image.FromFile("screenshot.png"));
-            var img = imgRepo.GetPart(PartScreenType.ManaPool).Source;
+            //var img = imgRepo.GetPart(PartScreenType.ManaPool).Source;
+            var img = imgRepo.Source;
 
             var solutionDirectory = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "../../../../"));
 
@@ -35,14 +37,18 @@ namespace detect_viewer
             DataViewSchema predictionPipelineSchema;
             ITransformer predictionPipeline = mlContext.Model.Load(modelRelativePath, out predictionPipelineSchema);
             PredictionEngine<ModelInput, ModelOutput> predictionEngine = mlContext.Model.CreatePredictionEngine<ModelInput, ModelOutput>(predictionPipeline);
-            ModelInput inputData = new ModelInput();
-            using (var ms = new MemoryStream())
+            foreach (var part in imgRepo.Parts)
             {
-                img.Save(ms, img.RawFormat);
-                inputData.Image = ms.ToArray();
+                ModelInput inputData = new ModelInput();
+                using (var ms = new MemoryStream())
+                {
+                    part.Source.Save(ms, img.RawFormat);
+                    inputData.Image = ms.ToArray();
+                }
+                ModelOutput prediction = predictionEngine.Predict(inputData);
+                var label = prediction.PredictedLabel;
+                img.TagImage(part.Location, label);
             }
-            ModelOutput prediction = predictionEngine.Predict(inputData);
-            OutputPrediction(prediction);
 
             pictureBox1.Image = img;
         }

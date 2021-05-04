@@ -20,13 +20,13 @@ namespace poe.lib
             this.Source = fullScreen;
 
             var parts = new List<PartScreen>();
-            parts.Add(new PartScreen(PartScreenType.LifePool, fullScreen, 0, 860, 230, 220));
-            parts.Add(new PartScreen(PartScreenType.FlaskSlot1, fullScreen, 300, 970, 50, 110));
-            parts.Add(new PartScreen(PartScreenType.FlaskSlot2, fullScreen, 348, 970, 50, 110));
-            parts.Add(new PartScreen(PartScreenType.FlaskSlot3, fullScreen, 396, 970, 50, 110));
-            parts.Add(new PartScreen(PartScreenType.FlaskSlot4, fullScreen, 444, 970, 50, 110));
-            parts.Add(new PartScreen(PartScreenType.FlaskSlot5, fullScreen, 492, 970, 50, 110));
-            parts.Add(new PartScreen(PartScreenType.ManaPool, fullScreen, 1690, 860, 230, 220));
+            parts.Add(new PartScreen(PartScreenType.LifePool, fullScreen, 0, 860, 230, 215));
+            parts.Add(new PartScreen(PartScreenType.FlaskSlot1, fullScreen, 300, 970, 50, 105));
+            parts.Add(new PartScreen(PartScreenType.FlaskSlot2, fullScreen, 348, 970, 50, 105));
+            parts.Add(new PartScreen(PartScreenType.FlaskSlot3, fullScreen, 396, 970, 50, 105));
+            parts.Add(new PartScreen(PartScreenType.FlaskSlot4, fullScreen, 444, 970, 50, 105));
+            parts.Add(new PartScreen(PartScreenType.FlaskSlot5, fullScreen, 492, 970, 50, 105));
+            parts.Add(new PartScreen(PartScreenType.ManaPool, fullScreen, 1690, 860, 230, 215));
 
             this.Parts = parts;
         }

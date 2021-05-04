@@ -35,5 +35,21 @@ namespace poe.lib.ImageExtension
             }
             return target;
         }
+
+        public static void TagImage(this Image src, Rectangle area, string label)
+        {
+            Pen pen = new Pen(Color.Red, 2);
+            var fnt = new Font("Arial", 10);
+
+            using (var g = Graphics.FromImage(src))
+            {
+                g.DrawRectangle(pen, area);
+
+                var sizeOfLabel = g.MeasureString(label, fnt);
+                var rectOfLabel = new Rectangle(area.Location, sizeOfLabel.ToSize());
+                g.FillRectangle(Brushes.White, rectOfLabel);
+                g.DrawString(label, fnt, Brushes.Blue, area.Location);
+            }
+        }
     }
 }
