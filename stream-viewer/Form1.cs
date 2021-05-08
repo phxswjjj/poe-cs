@@ -27,36 +27,34 @@ namespace stream_viewer
         private void Form1_Load(object sender, EventArgs e)
         {
             var missAndRetryTime = 10 * 1000;
-            var findWindowTitle = "LINE";
-            var process = Process.GetProcesses().FirstOrDefault(p => p.MainWindowTitle == findWindowTitle);
-            var capture = new ScreenCapture();
+            var findWindowTitle = "Path of Exile";
+            var targetHandle = ScreenCapture.User32.FindWindowByCaption(findWindowTitle);
+            var capture = new ScreenCapture() { EnableDebug = true };
 
             JobRefreshStream = new Thread(() =>
             {
                 while (!Stopping)
                 {
-                    if (process == null)
+                    if (targetHandle == IntPtr.Zero)
                     {
                         //wait retry
                         Thread.Sleep(missAndRetryTime);
-                        process = Process.GetProcesses().FirstOrDefault(p => p.MainWindowTitle == findWindowTitle);
+                        targetHandle = ScreenCapture.User32.FindWindowByCaption(findWindowTitle);
                     }
-                    if (!IsPause && process != null)
+                    if (!IsPause && targetHandle == ScreenCapture.User32.GetForegroundWindow())
                     {
                         try
                         {
-                            var img = capture.CaptureWindow(process.MainWindowHandle);
+                            var img = capture.CaptureWindow(targetHandle);
                             if (pictureBox1.Image != null)
                                 pictureBox1.Image.Dispose();
                             pictureBox1.Image = img;
                         }
                         catch (System.Runtime.InteropServices.ExternalException)
                         {
-                            process = null;
-                            Thread.Sleep(missAndRetryTime);
+                            targetHandle = IntPtr.Zero;
                         }
                     }
-                    Thread.Sleep(100);
                 }
             });
 
