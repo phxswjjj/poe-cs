@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31205.134
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "stream-viewer", "stream-viewer\stream-viewer.csproj", "{B51510EB-A024-42EE-9E94-69EEC050ACCB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "stream-viewer", "stream-viewer\stream-viewer.csproj", "{B51510EB-A024-42EE-9E94-69EEC050ACCB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "poe.lib", "poe.lib\poe.lib.csproj", "{2240EAE4-C9C4-40F3-8E4D-3425A8DD5274}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "poe.lib", "poe.lib\poe.lib.csproj", "{2240EAE4-C9C4-40F3-8E4D-3425A8DD5274}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ml-trainer", "ml-trainer\ml-trainer.csproj", "{AD7F3ADD-2E1E-4981-964A-4046670A5161}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ml-trainer", "ml-trainer\ml-trainer.csproj", "{AD7F3ADD-2E1E-4981-964A-4046670A5161}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "detect-viewer", "detect-viewer\detect-viewer.csproj", "{158D7E4E-1B74-4C6D-AAF1-7CFC338E49CF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "detect-viewer", "detect-viewer\detect-viewer.csproj", "{158D7E4E-1B74-4C6D-AAF1-7CFC338E49CF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

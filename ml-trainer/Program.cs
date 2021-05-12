@@ -30,54 +30,37 @@ namespace ml_trainer
             MLContext mlContext = new MLContext();
 
             IEnumerable<ImageData> images = LoadImagesFromDirectory(folder: assetsRelativePath, useFolderNameAsLabel: true);
-
             IDataView imageData = mlContext.Data.LoadFromEnumerable(images);
-
             IDataView shuffledData = mlContext.Data.ShuffleRows(imageData);
 
             var preprocessingPipeline = mlContext.Transforms.Conversion.MapValueToKey(
-                    inputColumnName: "Label",
-                    outputColumnName: "LabelAsKey")
+                    outputColumnName: "LabelAsKey",
+                    inputColumnName: "Label")
                 .Append(mlContext.Transforms.LoadRawImageBytes(
                     outputColumnName: "Image",
-                    imageFolder: assetsRelativePath,
-                    inputColumnName: "ImagePath"));
-
+                    inputColumnName: "ImagePath",
+                    imageFolder: assetsRelativePath));
             IDataView preProcessedData = preprocessingPipeline
                                 .Fit(shuffledData)
                                 .Transform(shuffledData);
 
-            TrainTestData trainSplit = mlContext.Data.TrainTestSplit(data: preProcessedData, testFraction: 0.3);
-            TrainTestData validationTestSplit = mlContext.Data.TrainTestSplit(trainSplit.TestSet);
+            TrainTestData trainSplit = mlContext.Data.TrainTestSplit(data: preProcessedData, testFraction: 0.2);
 
-            //70%
             IDataView trainSet = trainSplit.TrainSet;
-            //30% * 90% = 27%
-            IDataView validationSet = validationTestSplit.TrainSet;
-            //30% * 10% = 3%
-            IDataView testSet = validationTestSplit.TestSet;
+            IDataView validationSet = trainSplit.TestSet;
 
-            var classifierOptions = new ImageClassificationTrainer.Options()
-            {
-                FeatureColumnName = "Image",
-                LabelColumnName = "LabelAsKey",
-                ValidationSet = validationSet,
-                Arch = ImageClassificationTrainer.Architecture.ResnetV2101,
-                MetricsCallback = (metrics) => Console.WriteLine(metrics),
-                TestOnTrainSet = false,
-                ReuseTrainSetBottleneckCachedValues = true,
-                ReuseValidationSetBottleneckCachedValues = true
-            };
-
-            var trainingPipeline = mlContext.MulticlassClassification.Trainers.ImageClassification(classifierOptions)
+            var trainingPipeline = mlContext.MulticlassClassification.Trainers.ImageClassification(
+                    featureColumnName: "Image",
+                    labelColumnName: "LabelAsKey",
+                    validationSet: validationSet)
                 .Append(mlContext.Transforms.Conversion.MapKeyToValue("PredictedLabel"));
 
             ITransformer trainedModel = trainingPipeline.Fit(trainSet);
             Console.WriteLine("save model");
             mlContext.Model.Save(trainedModel, imageData.Schema, modelRelativePath);
 
+            var testSet = validationSet;
             ClassifySingleImage(mlContext, testSet, trainedModel);
-
             ClassifyImages(mlContext, testSet, trainedModel);
         }
 
@@ -114,7 +97,7 @@ namespace ml_trainer
         private static void OutputPrediction(ModelOutput prediction)
         {
             string imageName = Path.GetFileName(prediction.ImagePath);
-            Console.WriteLine($"Image: {imageName} | Actual Value: {prediction.Label} | Predicted Value: {prediction.PredictedLabel}");
+            Console.WriteLine($"Image: {imageName} | Actual Value: {prediction.Label} | Predicted Value: {prediction.PredictedLabel} | Score: [{string.Join(",", prediction.Score)}]");
         }
 
         public static IEnumerable<ImageData> LoadImagesFromDirectory(string folder, bool useFolderNameAsLabel = true)

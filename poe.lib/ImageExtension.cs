@@ -54,13 +54,12 @@ namespace poe.lib.ImageExtension
         public static void ShowFPS(this Image src, int fps)
         {
             var label = fps.ToString();
-            var loc = new Point(0, 0);
             var fnt = new Font("Arial", 40, FontStyle.Bold);
 
             using (var g = Graphics.FromImage(src))
             {
                 var sizeOfLabel = g.MeasureString(label, fnt);
-                g.DrawString(label, fnt, Brushes.Lime, loc);
+                g.DrawString(label, fnt, Brushes.Lime, Point.Empty);
             }
         }
     }
