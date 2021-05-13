@@ -23,6 +23,7 @@ namespace stream_viewer
         Thread JobRefreshStream = null;
         bool Stopping = false;
         bool IsPause = false;
+        PredictionEngine<ModelInput, ModelOutput> _PredictionEngine;
 
         public Form1()
         {
@@ -31,6 +32,8 @@ namespace stream_viewer
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            InitializeML();
+
             var missAndRetryTime = 10 * 1000;
             var findWindowTitle = "Path of Exile";
             var targetHandle = ScreenCapture.User32.FindWindowByCaption(findWindowTitle);
@@ -81,7 +84,7 @@ namespace stream_viewer
             JobRefreshStream.Start();
         }
 
-        private void PredictionImage(Image img)
+        private void InitializeML()
         {
             var solutionDirectory = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "../../../../"));
             var workspaceRelativePath = Path.Combine(solutionDirectory, "workspace");
@@ -89,7 +92,12 @@ namespace stream_viewer
 
             MLContext mlContext = new MLContext();
             ITransformer predictionPipeline = mlContext.Model.Load(modelRelativePath, out var predictionPipelineSchema);
-            PredictionEngine<ModelInput, ModelOutput> predictionEngine = mlContext.Model.CreatePredictionEngine<ModelInput, ModelOutput>(predictionPipeline);
+            _PredictionEngine = mlContext.Model.CreatePredictionEngine<ModelInput, ModelOutput>(predictionPipeline);
+        }
+
+        private void PredictionImage(Image img)
+        {
+            var predictionEngine = _PredictionEngine;
 
             var imgRepo = new ScreenRepository(img);
             foreach (var part in imgRepo.Parts)
