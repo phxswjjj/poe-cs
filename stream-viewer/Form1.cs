@@ -1,10 +1,15 @@
-﻿using poe.lib.Win;
+﻿using Microsoft.ML;
+using poe.lib;
+using poe.lib.ImageExtension;
+using poe.lib.ML;
+using poe.lib.Win;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -45,10 +50,25 @@ namespace stream_viewer
                     {
                         try
                         {
+                            var sw = new Stopwatch();
+                            sw.Start();
+
                             var img = capture.CaptureWindow(targetHandle);
                             if (pictureBox1.Image != null)
                                 pictureBox1.Image.Dispose();
+
+                            PredictionImage(img);
                             pictureBox1.Image = img;
+
+                            sw.Stop();
+                            var msec = sw.ElapsedMilliseconds;
+                            if (this.InvokeRequired)
+                            {
+                                this.Invoke((MethodInvoker)delegate
+                                {
+                                    this.Text = $"{msec:#,##} ms";
+                                });
+                            }
                         }
                         catch (System.Runtime.InteropServices.ExternalException)
                         {
@@ -59,6 +79,31 @@ namespace stream_viewer
             });
 
             JobRefreshStream.Start();
+        }
+
+        private void PredictionImage(Image img)
+        {
+            var solutionDirectory = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "../../../../"));
+            var workspaceRelativePath = Path.Combine(solutionDirectory, "workspace");
+            var modelRelativePath = Path.Combine(workspaceRelativePath, "model.zip");
+
+            MLContext mlContext = new MLContext();
+            ITransformer predictionPipeline = mlContext.Model.Load(modelRelativePath, out var predictionPipelineSchema);
+            PredictionEngine<ModelInput, ModelOutput> predictionEngine = mlContext.Model.CreatePredictionEngine<ModelInput, ModelOutput>(predictionPipeline);
+
+            var imgRepo = new ScreenRepository(img);
+            foreach (var part in imgRepo.Parts)
+            {
+                ModelInput inputData = new ModelInput();
+                using (var ms = new MemoryStream())
+                {
+                    part.Source.Save(ms, img.RawFormat);
+                    inputData.Image = ms.ToArray();
+                }
+                ModelOutput prediction = predictionEngine.Predict(inputData);
+                var label = prediction.PredictedLabel;
+                img.TagImage(part.Location, label);
+            }
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
