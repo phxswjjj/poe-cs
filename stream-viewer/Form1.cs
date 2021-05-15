@@ -91,7 +91,12 @@ namespace stream_viewer
             var modelRelativePath = Path.Combine(workspaceRelativePath, "model.zip");
 
             MLContext mlContext = new MLContext();
-            ITransformer predictionPipeline = mlContext.Model.Load(modelRelativePath, out var predictionPipelineSchema);
+            ITransformer predictionPipeline;
+            using (var reader = new FileStream(modelRelativePath,
+                FileMode.Open, FileAccess.Read, FileShare.Read))
+            {
+                predictionPipeline = mlContext.Model.Load(reader, out _);
+            }
             _PredictionEngine = mlContext.Model.CreatePredictionEngine<ModelInput, ModelOutput>(predictionPipeline);
         }
 
@@ -109,8 +114,7 @@ namespace stream_viewer
                     inputData.Image = ms.ToArray();
                 }
                 ModelOutput prediction = predictionEngine.Predict(inputData);
-                var label = prediction.PredictedLabel;
-                img.TagImage(part.Location, label);
+                img.TagImage(part.Location, prediction);
             }
         }
 

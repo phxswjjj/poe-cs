@@ -36,7 +36,13 @@ namespace poe.lib.ImageExtension
             return target;
         }
 
-        public static void TagImage(this Image src, Rectangle area, string label)
+        public static void TagImage(this Image src, Rectangle area, ML.ModelOutput prediction)
+        {
+            var label = prediction.PredictedLabel;
+            var labelScore = prediction.MaxScore.ToString("0.00");
+            src.TagImage(area, label, labelScore);
+        }
+        public static void TagImage(this Image src, Rectangle area, string label, string label2 = "")
         {
             Pen pen = new Pen(Color.Red, 2);
             var fnt = new Font("Arial", 10);
@@ -48,9 +54,20 @@ namespace poe.lib.ImageExtension
                 var sizeOfLabel = g.MeasureString(label, fnt);
                 var rectOfLabel = new Rectangle(area.Location, sizeOfLabel.ToSize());
                 g.FillRectangle(Brushes.White, rectOfLabel);
-                g.DrawString(label, fnt, Brushes.Blue, area.Location);
+                g.DrawString(label, fnt, Brushes.Blue, rectOfLabel.Location);
+
+                if (label2.Length > 0)
+                {
+                    sizeOfLabel = g.MeasureString(label2, fnt);
+                    var loc = area.Location;
+                    loc.Offset(0, (int)sizeOfLabel.Height);
+                    rectOfLabel = new Rectangle(loc, sizeOfLabel.ToSize());
+                    g.FillRectangle(Brushes.White, rectOfLabel);
+                    g.DrawString(label2, fnt, Brushes.Blue, rectOfLabel.Location);
+                }
             }
         }
+
         public static void ShowFPS(this Image src, int fps)
         {
             var label = fps.ToString();

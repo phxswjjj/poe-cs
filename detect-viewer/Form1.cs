@@ -47,7 +47,8 @@ namespace detect_viewer
                 }
                 ModelOutput prediction = predictionEngine.Predict(inputData);
                 var label = prediction.PredictedLabel;
-                img.TagImage(part.Location, label);
+                var labelScore = prediction.MaxScore.ToString("0.00");
+                img.TagImage(part.Location, prediction);
             }
 
             pictureBox1.Image = img;
