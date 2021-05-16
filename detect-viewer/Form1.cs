@@ -34,11 +34,10 @@ namespace detect_viewer
             var workspaceRelativePath = Path.Combine(solutionDirectory, "workspace");
             var modelRelativePath = Path.Combine(workspaceRelativePath, "model.zip");
 
-            MLContext mlContext = new MLContext();
-            ITransformer predictionPipeline = mlContext.Model.Load(modelRelativePath, out _);
-            PredictionEngine<ModelInput, ModelOutput> predictionEngine = mlContext.Model.CreatePredictionEngine<ModelInput, ModelOutput>(predictionPipeline);
+            var mlEngine = new MLModelEngine<ModelInput, ModelOutput>(modelRelativePath);
+            
             //取得 label list, 對應 score 順序
-            //var labels = RetriveLabel(predictionEngine);
+            //var labels = RetriveLabel(mlEngine.PredictionEngine);
             foreach (var part in imgRepo.Parts)
             {
                 ModelInput inputData = new ModelInput();
@@ -47,7 +46,7 @@ namespace detect_viewer
                     part.Source.Save(ms, img.RawFormat);
                     inputData.Image = ms.ToArray();
                 }
-                ModelOutput prediction = predictionEngine.Predict(inputData);
+                ModelOutput prediction = mlEngine.Predict(inputData);
                 //var index = Array.IndexOf(labels, prediction.PredictedLabel);
                 //var score = prediction.Score[index];
                 img.TagImage(part.Location, prediction);
@@ -62,12 +61,6 @@ namespace detect_viewer
             predictionEngine.OutputSchema["Score"].Annotations.GetValue("SlotNames", ref labelBuffer);
             var labels = labelBuffer.DenseValues().Select(l => l.ToString()).ToArray();
             return labels;
-        }
-
-        private void OutputPrediction(ModelOutput prediction)
-        {
-            var msg = $"Actual Value: {prediction.Label} | Predicted Value: {prediction.PredictedLabel}";
-            this.Text = msg;
         }
     }
 }

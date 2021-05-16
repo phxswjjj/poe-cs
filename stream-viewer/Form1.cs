@@ -23,7 +23,6 @@ namespace stream_viewer
         Thread JobRefreshStream = null;
         bool Stopping = false;
         bool IsPause = false;
-        PredictionEngine<ModelInput, ModelOutput> _PredictionEngine;
 
         public Form1()
         {
@@ -41,6 +40,7 @@ namespace stream_viewer
 
             JobRefreshStream = new Thread(() =>
             {
+                var predictionEngine = InitializeML();
                 while (!Stopping)
                 {
                     if (targetHandle == IntPtr.Zero)
@@ -60,7 +60,7 @@ namespace stream_viewer
                             if (pictureBox1.Image != null)
                                 pictureBox1.Image.Dispose();
 
-                            PredictionImage(img);
+                            predictionEngine.PredictionImage(img);
                             pictureBox1.Image = img;
 
                             sw.Stop();
@@ -84,7 +84,7 @@ namespace stream_viewer
             JobRefreshStream.Start();
         }
 
-        private void InitializeML()
+        private PredictionEngine<ModelInput, ModelOutput> InitializeML()
         {
             var solutionDirectory = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "../../../../"));
             var workspaceRelativePath = Path.Combine(solutionDirectory, "workspace");
@@ -97,25 +97,7 @@ namespace stream_viewer
             {
                 predictionPipeline = mlContext.Model.Load(reader, out _);
             }
-            _PredictionEngine = mlContext.Model.CreatePredictionEngine<ModelInput, ModelOutput>(predictionPipeline);
-        }
-
-        private void PredictionImage(Image img)
-        {
-            var predictionEngine = _PredictionEngine;
-
-            var imgRepo = new ScreenRepository(img);
-            foreach (var part in imgRepo.Parts)
-            {
-                ModelInput inputData = new ModelInput();
-                using (var ms = new MemoryStream())
-                {
-                    part.Source.Save(ms, img.RawFormat);
-                    inputData.Image = ms.ToArray();
-                }
-                ModelOutput prediction = predictionEngine.Predict(inputData);
-                img.TagImage(part.Location, prediction);
-            }
+            return mlContext.Model.CreatePredictionEngine<ModelInput, ModelOutput>(predictionPipeline);
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
