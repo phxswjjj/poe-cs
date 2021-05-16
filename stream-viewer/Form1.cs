@@ -23,6 +23,7 @@ namespace stream_viewer
         Thread JobRefreshStream = null;
         bool Stopping = false;
         bool IsPause = false;
+        MLModelEngine<ModelInput, ModelOutput> MLEngine;
 
         public Form1()
         {
@@ -40,7 +41,6 @@ namespace stream_viewer
 
             JobRefreshStream = new Thread(() =>
             {
-                var predictionEngine = InitializeML();
                 while (!Stopping)
                 {
                     if (targetHandle == IntPtr.Zero)
@@ -60,7 +60,7 @@ namespace stream_viewer
                             if (pictureBox1.Image != null)
                                 pictureBox1.Image.Dispose();
 
-                            predictionEngine.PredictionImage(img);
+                            MLEngine.PredictionImage(img);
                             pictureBox1.Image = img;
 
                             sw.Stop();
@@ -84,20 +84,13 @@ namespace stream_viewer
             JobRefreshStream.Start();
         }
 
-        private PredictionEngine<ModelInput, ModelOutput> InitializeML()
+        private void InitializeML()
         {
             var solutionDirectory = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "../../../../"));
             var workspaceRelativePath = Path.Combine(solutionDirectory, "workspace");
             var modelRelativePath = Path.Combine(workspaceRelativePath, "model.zip");
 
-            MLContext mlContext = new MLContext();
-            ITransformer predictionPipeline;
-            using (var reader = new FileStream(modelRelativePath,
-                FileMode.Open, FileAccess.Read, FileShare.Read))
-            {
-                predictionPipeline = mlContext.Model.Load(reader, out _);
-            }
-            return mlContext.Model.CreatePredictionEngine<ModelInput, ModelOutput>(predictionPipeline);
+            MLEngine = new MLModelEngine<ModelInput, ModelOutput>(modelRelativePath);
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
