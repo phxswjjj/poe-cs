@@ -3,6 +3,7 @@ using Microsoft.ML;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace poe.lib.ML
@@ -17,7 +18,6 @@ namespace poe.lib.ML
         private readonly int _maxObjectsRetained;
 
         public ITransformer MLModel => _mlModel;
-        public PredictionEngine<TSrc, TDst> PredictionEngine => _predictionEnginePool.Get();
 
         public MLModelEngine(string modelFilePathName, int maxObjectsRetained = -1)
         {
@@ -68,6 +68,22 @@ namespace poe.lib.ML
             finally
             {
                 //Release used PredictionEngine object into the Object Pool
+                _predictionEnginePool.Return(predictionEngine);
+            }
+        }
+
+        public string[] RetriveLabels()
+        {
+            var predictionEngine = _predictionEnginePool.Get();
+            try
+            {
+                var labelBuffer = new Microsoft.ML.Data.VBuffer<ReadOnlyMemory<char>>();
+                predictionEngine.OutputSchema["Score"].Annotations.GetValue("SlotNames", ref labelBuffer);
+                var labels = labelBuffer.DenseValues().Select(l => l.ToString()).ToArray();
+                return labels;
+            }
+            finally
+            {
                 _predictionEnginePool.Return(predictionEngine);
             }
         }

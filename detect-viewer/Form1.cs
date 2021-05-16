@@ -35,9 +35,9 @@ namespace detect_viewer
             var modelRelativePath = Path.Combine(workspaceRelativePath, "model.zip");
 
             var mlEngine = new MLModelEngine<ModelInput, ModelOutput>(modelRelativePath);
-            
+
             //取得 label list, 對應 score 順序
-            //var labels = RetriveLabel(mlEngine.PredictionEngine);
+            //var labels = mlEngine.RetriveLabels();
             foreach (var part in imgRepo.Parts)
             {
                 ModelInput inputData = new ModelInput();
@@ -53,14 +53,6 @@ namespace detect_viewer
             }
 
             pictureBox1.Image = img;
-        }
-
-        private string[] RetriveLabel(PredictionEngine<ModelInput, ModelOutput> predictionEngine)
-        {
-            var labelBuffer = new VBuffer<ReadOnlyMemory<char>>();
-            predictionEngine.OutputSchema["Score"].Annotations.GetValue("SlotNames", ref labelBuffer);
-            var labels = labelBuffer.DenseValues().Select(l => l.ToString()).ToArray();
-            return labels;
         }
     }
 }
