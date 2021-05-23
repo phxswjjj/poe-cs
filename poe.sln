@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ml-trainer", "ml-trainer\ml
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "detect-viewer", "detect-viewer\detect-viewer.csproj", "{158D7E4E-1B74-4C6D-AAF1-7CFC338E49CF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "keyboard-detect", "keyboard-detect\keyboard-detect.csproj", "{E264602A-465B-45B1-98DF-654E9008174B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{158D7E4E-1B74-4C6D-AAF1-7CFC338E49CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{158D7E4E-1B74-4C6D-AAF1-7CFC338E49CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{158D7E4E-1B74-4C6D-AAF1-7CFC338E49CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E264602A-465B-45B1-98DF-654E9008174B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E264602A-465B-45B1-98DF-654E9008174B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E264602A-465B-45B1-98DF-654E9008174B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E264602A-465B-45B1-98DF-654E9008174B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
