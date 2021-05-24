@@ -21,6 +21,7 @@ namespace stream_viewer
     public partial class Form1 : Form
     {
         Thread JobRefreshStream = null;
+        Thread JobKeyboarder = null;
         bool Stopping = false;
         bool IsPause = false;
         MLModelEngine<ModelInput, ModelOutput> MLEngine;
@@ -81,7 +82,25 @@ namespace stream_viewer
                 }
             });
 
+            JobKeyboarder = new Thread(() =>
+            {
+                while (!Stopping)
+                {
+                    if (targetHandle == IntPtr.Zero)
+                    {
+                        Thread.Sleep(500);
+                        continue;
+                    }
+                    if (!IsPause && targetHandle == ScreenCapture.User32.GetForegroundWindow())
+                    {
+
+                    }
+
+                }
+            });
+
             JobRefreshStream.Start();
+            JobKeyboarder.Start();
         }
 
         private void InitializeML()
@@ -110,6 +129,20 @@ namespace stream_viewer
                     }
                 }
 
+            }
+            if (JobKeyboarder != null)
+            {
+                if (!JobKeyboarder.Join(1000))
+                {
+                    try
+                    {
+                        JobKeyboarder.Abort();
+                    }
+                    catch (Exception)
+                    {
+                        //ignore
+                    }
+                }
             }
         }
 
