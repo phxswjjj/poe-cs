@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="InputSimulator" Version="1.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\poe.lib\poe.lib.csproj" />
   </ItemGroup>
 

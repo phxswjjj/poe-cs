@@ -7,6 +7,8 @@ using System.Drawing;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using WindowsInput;
+using WindowsInput.Native;
 
 namespace keyboard_detect
 {
@@ -45,6 +47,14 @@ namespace keyboard_detect
                             label1.Text = "Stopped";
                         Thread.Sleep(100);
                     });
+
+                    if (EnableKeepRunning)
+                    {
+                        //kb.SendKey();
+                        var inputSim = new InputSimulator();
+                        inputSim.Keyboard.KeyPress(VirtualKeyCode.SPACE);
+                        Thread.Sleep(200);
+                    }
                 }
             });
             JobKeepRunning.Start();
